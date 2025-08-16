@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="grid md:grid-cols-3 md:grid-rows-2 gap-6">
+    {% with main=posts.0 %}
+    <article class="md:col-span-2 md:row-span-2 bg-white rounded-lg shadow hover:shadow-lg transition">
+        <img src="{{ main.image }}" alt="" class="w-full h-56 object-cover rounded-t-lg">
+        <div class="p-6">
+            <p class="text-sm text-gray-500">{{ main.category }} · {{ main.date }} · {{ main.read_time }} min read</p>
+            <h2 class="text-2xl font-bold mt-2 flex items-center">{{ main.title }} <span class="ml-2 text-blue-600">&gt;</span></h2>
+            <p class="mt-2 text-gray-700">{{ main.summary }}</p>
+        </div>
+    </article>
+    {% endwith %}
+    {% with second=posts.1 %}
+    <article class="bg-white rounded-lg shadow hover:shadow-lg transition flex flex-col">
+        <img src="{{ second.image }}" alt="" class="w-full h-40 object-cover rounded-t-lg">
+        <div class="p-4 flex flex-col flex-1">
+            <p class="text-sm text-gray-500">{{ second.category }} · {{ second.date }} · {{ second.read_time }} min read</p>
+            <h3 class="text-xl font-bold mt-2 flex-1 flex items-center">{{ second.title }} <span class="ml-2 text-blue-600">&gt;</span></h3>
+        </div>
+    </article>
+    {% endwith %}
+    {% with third=posts.2 %}
+    <article class="bg-white rounded-lg shadow hover:shadow-lg transition flex flex-col">
+        <img src="{{ third.image }}" alt="" class="w-full h-40 object-cover rounded-t-lg">
+        <div class="p-4 flex flex-col flex-1">
+            <p class="text-sm text-gray-500">{{ third.category }} · {{ third.date }} · {{ third.read_time }} min read</p>
+            <h3 class="text-xl font-bold mt-2 flex-1 flex items-center">{{ third.title }} <span class="ml-2 text-blue-600">&gt;</span></h3>
+        </div>
+    </article>
+    {% endwith %}
+</section>
+{% endblock %}
