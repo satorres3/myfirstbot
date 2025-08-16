@@ -17,12 +17,26 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from hub.views import PortalLoginView
+from hub.views import (
+    PortalLoginView,
+    google_callback,
+    google_login,
+    microsoft_callback,
+    microsoft_login,
+)
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("login/", PortalLoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path("auth/microsoft/", microsoft_login, name="microsoft-login"),
+    path(
+        "auth/microsoft/callback/",
+        microsoft_callback,
+        name="microsoft-callback",
+    ),
+    path("auth/google/", google_login, name="google-login"),
+    path("auth/google/callback/", google_callback, name="google-callback"),
     path("", include("hub.urls", namespace="hub")),
 ]

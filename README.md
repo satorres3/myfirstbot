@@ -29,6 +29,28 @@ $ python manage.py runserver
 2. Create departments from `/departments/new/`.
 3. Extend AI settings and OAuth providers via `portal/settings.py` and future configuration modules.
 
+### Microsoft and Google Login
+
+To enable single sign-on via MSAL:
+
+1. **Register Applications**
+   - For Microsoft, register an app in Azure AD and note the client ID and secret.
+   - For Google, create OAuth credentials in the Google Cloud console.
+2. **Configure Environment**
+   - Set the following environment variables before running the server:
+     ```bash
+     export MICROSOFT_CLIENT_ID=<app-id>
+     export MICROSOFT_CLIENT_SECRET=<secret>
+     export MICROSOFT_AUTHORITY=https://login.microsoftonline.com/common
+     export MICROSOFT_REDIRECT_URI=http://localhost:8000/auth/microsoft/callback/
+
+     export GOOGLE_CLIENT_ID=<google-client-id>
+     export GOOGLE_CLIENT_SECRET=<google-client-secret>
+     export GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback/
+     ```
+3. **Use the Routes**
+   - Navigate to `/login/` and choose **Sign in with Microsoft** or **Sign in with Google**.
+
 ## Documentation
 
 To build HTML documentation from docstrings:
