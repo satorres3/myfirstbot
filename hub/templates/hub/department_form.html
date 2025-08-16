@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}New Department{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+  <h1 class="text-2xl mb-4">Create Department</h1>
+  <form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button class="mt-4 bg-purple-600 text-white py-2 px-4 rounded" type="submit">Save</button>
+  </form>
+</div>
+{% endblock %}
