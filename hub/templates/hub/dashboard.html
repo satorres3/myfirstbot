@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Hub{% endblock %}
+{% block content %}
+<h1 class="text-3xl mb-4">Departments</h1>
+<ul>
+{% for dept in departments %}
+  <li class="mb-2 p-4 bg-white rounded shadow">{{ dept.name }}</li>
+{% empty %}
+  <li>No departments yet.</li>
+{% endfor %}
+</ul>
+{% endblock %}
