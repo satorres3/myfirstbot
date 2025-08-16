@@ -2,11 +2,14 @@
 {% block title %}Hub{% endblock %}
 {% block content %}
 <h1 class="text-3xl mb-4">Departments</h1>
-<ul>
+<div class="grid md:grid-cols-3 gap-6">
 {% for dept in departments %}
-  <li class="mb-2 p-4 bg-white rounded shadow">{{ dept.name }}</li>
+  <div class="p-4 bg-white rounded shadow hover:shadow-lg transition">
+    <h2 class="text-xl font-semibold flex items-center">{{ dept.name }} <span class="ml-2 text-blue-600">&gt;</span></h2>
+    <p class="text-sm text-gray-500">Created {{ dept.created_at|date:'M d, Y' }}</p>
+  </div>
 {% empty %}
-  <li>No departments yet.</li>
+  <p>No departments yet.</p>
 {% endfor %}
-</ul>
+</div>
 {% endblock %}
