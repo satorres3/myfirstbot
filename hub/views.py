@@ -1,7 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, TemplateView
+
+import msal
+from google_auth_oauthlib.flow import Flow
 
 from .models import Department
 from .forms import DepartmentForm
@@ -58,3 +64,72 @@ class PortalHomeView(TemplateView):
             },
         ]
         return context
+
+
+def microsoft_login(request):
+    app = msal.ConfidentialClientApplication(
+        settings.MICROSOFT_CLIENT_ID,
+        authority=settings.MICROSOFT_AUTHORITY,
+        client_credential=settings.MICROSOFT_CLIENT_SECRET,
+    )
+    auth_url = app.get_authorization_request_url(
+        ["User.Read"], redirect_uri=settings.MICROSOFT_REDIRECT_URI
+    )
+    return redirect(auth_url)
+
+
+def microsoft_callback(request):
+    code = request.GET.get("code")
+    if not code:
+        return HttpResponse("No code provided", status=400)
+    app = msal.ConfidentialClientApplication(
+        settings.MICROSOFT_CLIENT_ID,
+        authority=settings.MICROSOFT_AUTHORITY,
+        client_credential=settings.MICROSOFT_CLIENT_SECRET,
+    )
+    result = app.acquire_token_by_authorization_code(
+        code,
+        scopes=["User.Read"],
+        redirect_uri=settings.MICROSOFT_REDIRECT_URI,
+    )
+    return HttpResponse(result)
+
+
+def google_login(request):
+    flow = Flow.from_client_config(
+        {
+            "web": {
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+            }
+        },
+        scopes=["openid", "https://www.googleapis.com/auth/userinfo.email"],
+        redirect_uri=settings.GOOGLE_REDIRECT_URI,
+    )
+    auth_url, state = flow.authorization_url(
+        prompt="consent", include_granted_scopes="true"
+    )
+    request.session["google_oauth_state"] = state
+    return redirect(auth_url)
+
+
+def google_callback(request):
+    state = request.session.pop("google_oauth_state", "")
+    flow = Flow.from_client_config(
+        {
+            "web": {
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+            }
+        },
+        scopes=["openid", "https://www.googleapis.com/auth/userinfo.email"],
+        state=state,
+        redirect_uri=settings.GOOGLE_REDIRECT_URI,
+    )
+    flow.fetch_token(authorization_response=request.build_absolute_uri())
+    creds = flow.credentials
+    return HttpResponse(f"Google token: {creds.token}")
